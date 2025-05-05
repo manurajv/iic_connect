@@ -1,4 +1,3 @@
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:iic_connect/providers/academic_provider.dart';
@@ -24,14 +23,21 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
 
-  await FirebaseAppCheck.instance.activate(
-    androidProvider: AndroidProvider.debug,
-    appleProvider: AppleProvider.debug,
-  );
+    // // Optional: Configure debug providers
+    // await FirebaseAppCheck.instance.activate(
+    //     androidProvider: AndroidProvider.debug,
+    //     appleProvider: AppleProvider.debug,
+    //     webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key') // Add if using web
+    // );
+  } catch (e) {
+    print("🔥 Firebase initialization failed: $e");
+    // Handle error (e.g., show error screen)
+  }
 
   runApp(
     MultiProvider(

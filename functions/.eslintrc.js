@@ -14,9 +14,6 @@ module.exports = {
     "no-restricted-globals": ["error", "name", "length"],
     "prefer-arrow-callback": "error",
     "quotes": ["error", "double", {"allowTemplateLiterals": true}],
-    "indent": ["error", 2],
-    "comma-dangle": ["error", "always-multiline"],
-    "object-curly-spacing": ["error", "never"],
   },
   overrides: [
     {

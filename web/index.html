@@ -6,11 +6,29 @@
   <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app-check-compat.js"></script>
 
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+  <script>
+    import { initializeApp } from "firebase/app";
+    import { getAnalytics } from "firebase/analytics";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBnFtvAovsverYPOzzJ5AaVb9AJ2_30yAs",
+      authDomain: "iic-connect-ea888.firebaseapp.com",
+      projectId: "iic-connect-ea888",
+      storageBucket: "iic-connect-ea888.firebasestorage.app",
+      messagingSenderId: "780261785606",
+      appId: "1:780261785606:web:d0b7cc05049887b5ed4387"
+      measurementId: "G-YY1FDTYKEP"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+  </script>
 
   <meta name="referrer" content="no-referrer-when-downgrade">
+
   <!--
     If you are serving your web app in a path other than the root, change the
     href value below to reflect the base path you are serving from.
