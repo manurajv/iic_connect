@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:iic_connect/providers/attendance_provider.dart';
 import 'package:iic_connect/providers/auth_provider.dart';
-import 'package:iic_connect/utils/theme.dart';
 import 'package:iic_connect/widgets/glass_card.dart';
+
+import '../../models/student.dart';
 
 class MarkAttendanceScreen extends StatefulWidget {
   final String subjectId;
   final String subjectName;
-  final List<Map<String, dynamic>> students;
+  final List<Student> students; // Changed to use Student class
 
   const MarkAttendanceScreen({
     super.key,
@@ -31,14 +32,12 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
     super.initState();
     // Initialize all students as present by default
     for (final student in widget.students) {
-      _attendanceStatus[student['id']] = true;
+      _attendanceStatus[student.id] = true;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = context.read<AuthProvider>();
-
     return Scaffold(
       appBar: AppBar(title: Text('Mark Attendance - ${widget.subjectName}')),
       body: Form(
@@ -47,13 +46,15 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
+              // Date selection card
               GlassCard(
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
                     Expanded(
                       child: Text(
-                          'Date: ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}'),
+                        'Date: ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
+                      ),
                     ),
                     TextButton(
                       onPressed: () => _selectDate(context),
@@ -63,8 +64,13 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
                 ),
               ),
               const SizedBox(height: 16),
+
+              // Student list with checkboxes
               ...widget.students.map((student) => _buildStudentAttendanceItem(student)),
+
               const SizedBox(height: 16),
+
+              // Submit button
               ElevatedButton(
                 onPressed: _submitAttendance,
                 style: ElevatedButton.styleFrom(
@@ -82,16 +88,16 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
     );
   }
 
-  Widget _buildStudentAttendanceItem(Map<String, dynamic> student) {
+  Widget _buildStudentAttendanceItem(Student student) {
     return GlassCard(
       padding: const EdgeInsets.all(8),
       child: Row(
         children: [
           Checkbox(
-            value: _attendanceStatus[student['id']] ?? false,
+            value: _attendanceStatus[student.id] ?? false,
             onChanged: (value) {
               setState(() {
-                _attendanceStatus[student['id']] = value!;
+                _attendanceStatus[student.id] = value!;
               });
             },
           ),
@@ -101,11 +107,11 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  student['name'],
+                  student.name,
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 Text(
-                  student['enrollmentNumber'],
+                  student.enrollmentNumber ?? 'N/A',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
@@ -136,20 +142,18 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
     final authProvider = context.read<AuthProvider>();
     final attendanceProvider = context.read<AttendanceProvider>();
 
-    final students = widget.students.map((student) {
-      return {
-        'id': student['id'],
-        'name': student['name'],
-        'status': _attendanceStatus[student['id']] ?? false ? 'Present' : 'Absent',
-      };
-    }).toList();
-
     try {
       await attendanceProvider.markAttendance(
         subjectId: widget.subjectId,
         subjectName: widget.subjectName,
         date: _selectedDate,
-        students: students,
+        students: widget.students.map((student) {
+          return {
+            'id': student.id,
+            'name': student.name,
+            'status': _attendanceStatus[student.id] ?? false ? 'Present' : 'Absent',
+          };
+        }).toList(),
         facultyId: authProvider.user?.id,
         facultyName: authProvider.user?.name,
       );
@@ -159,7 +163,7 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error marking attendance: $e')),
+        SnackBar(content: Text('Error marking attendance: ${e.toString()}')),
       );
     }
   }
