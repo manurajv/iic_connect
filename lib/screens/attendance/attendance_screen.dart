@@ -617,15 +617,14 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   }
 
   Future<List<Map<String, dynamic>>> _fetchAvailableSubjects(
-    AuthProvider authProvider,
-  ) async {
+      AuthProvider authProvider,
+      ) async {
     try {
       if (authProvider.user?.role == 'faculty') {
-        final querySnapshot =
-            await FirebaseFirestore.instance
-                .collection('subjects')
-                .where('facultyId', isEqualTo: authProvider.user?.id)
-                .get();
+        final querySnapshot = await FirebaseFirestore.instance
+            .collection('subjects')
+            .where('facultyId', isEqualTo: authProvider.user?.id)
+            .get();
 
         return querySnapshot.docs
             .map((doc) => {'id': doc.id, 'name': doc.data()['name']})
@@ -633,8 +632,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       }
 
       if (authProvider.user?.isAdmin == true) {
-        final querySnapshot =
-            await FirebaseFirestore.instance.collection('subjects').get();
+        final querySnapshot = await FirebaseFirestore.instance
+            .collection('subjects')
+            .get();
 
         return querySnapshot.docs
             .map((doc) => {'id': doc.id, 'name': doc.data()['name']})

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:iic_connect/providers/auth_provider.dart';
-import 'package:iic_connect/screens/auth/register_screen.dart';
 import 'package:iic_connect/utils/constants.dart';
 import 'package:iic_connect/utils/helpers.dart';
 import 'package:iic_connect/utils/theme.dart';
@@ -39,6 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
         _emailController.text.trim(),
         _passwordController.text.trim(),
       );
+
+      Navigator.pushReplacementNamed(context, '/home');
 
       // The AuthWrapper will automatically handle navigation
       // No need for explicit navigation here

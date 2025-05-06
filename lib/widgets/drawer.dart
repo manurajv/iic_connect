@@ -2,15 +2,13 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:iic_connect/screens/admin/admin_dashboard_screen.dart';
 import 'package:iic_connect/screens/attendance/attendance_screen.dart';
-import 'package:iic_connect/screens/attendance/mark_attendance.dart';
+import 'package:iic_connect/screens/events/events_screen.dart';
 import 'package:iic_connect/screens/labs/labs_screen.dart';
 import 'package:iic_connect/screens/projects/projects_screen.dart';
 import 'package:iic_connect/screens/timetable/add_timetable_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:iic_connect/providers/auth_provider.dart';
-import 'package:iic_connect/utils/theme.dart';
 import 'package:iic_connect/screens/timetable/timetable_screen.dart';
-import 'package:iic_connect/screens/admin/user_management_screen.dart';
 import 'package:iic_connect/screens/admin/system_settings_screen.dart';
 import 'package:iic_connect/screens/admin/analytics_screen.dart';
 import 'package:iic_connect/utils/constants.dart';
@@ -129,9 +127,9 @@ class CustomDrawer extends StatelessWidget {
             onTap: () => _navigateTo(context, '/home'),
           ),
 
-          if (isAdmin) ...[
-            if (user != null &&
-                (isAdmin || user.role == AppConstants.staffRole))
+          if (isAdmin || user?.role == AppConstants.staffRole) ...[
+            // if (user != null &&
+            //     (isAdmin || user.role == AppConstants.staffRole))
               ListTile(
                 leading: const Icon(Icons.person_add),
                 title: const Text('Admin Management'),
@@ -155,15 +153,6 @@ class CustomDrawer extends StatelessWidget {
               ),
             ),
             _DrawerTile(
-              icon: Icons.settings_outlined,
-              activeIcon: Icons.settings,
-              title: 'System Settings',
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SystemSettingsScreen()),
-              ),
-            ),
-            _DrawerTile(
               icon: Icons.approval_outlined,
               activeIcon: Icons.approval,
               title: 'Enrollment Approval',
@@ -177,9 +166,45 @@ class CustomDrawer extends StatelessWidget {
                 );
               },
             ),
-            const Divider(height: 1),
+            if (user != null &&
+                (isAdmin || user.role == AppConstants.staffRole ))
+              ListTile(
+                leading: const Icon(Icons.person_add),
+                title: const Text('Register User'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const RegisterScreen(),
+                    ),
+                  );
+                },
+              ),
+            // _DrawerTile(
+            //   icon: Icons.analytics_outlined,
+            //   activeIcon: Icons.analytics,
+            //   title: 'Event Registration',
+            //   onTap: () => Navigator.push(
+            //     context,
+            //     MaterialPageRoute(builder: (context) => EventRegistrationScreen(event: event)),
+            //   ),
+            // ),
+
           ],
 
+          if (isAdmin || user?.role == AppConstants.facultyRole) ...[
+            _DrawerTile(
+              icon: Icons.calendar_month_outlined,
+              activeIcon: Icons.calendar_month,
+              title: 'Timetable Management',
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AddTimetableScreen()),
+              ),
+            ),
+          ],
+          const Divider(height: 1),
           if (isAdmin || user?.role == AppConstants.studentRole || user?.role == AppConstants.facultyRole) ...[
             _DrawerTile(
               icon: Icons.schedule_outlined,
@@ -220,27 +245,19 @@ class CustomDrawer extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => LabsScreen()),
               ),
             ),
-            _DrawerTile(
-              icon: Icons.calendar_month_outlined,
-              activeIcon: Icons.calendar_month,
-              title: 'Timetable Management',
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AddTimetableScreen()),
-              ),
-            ),
-            // _DrawerTile(
-            //   icon: Icons.bookmark_add,
-            //   activeIcon: Icons.bookmark_added,
-            //   title: 'Attendance Management',
-            //   onTap: () => Navigator.push(
-            //     context,
-            //     MaterialPageRoute(builder: (context) => MarkAttendanceScreen(subjectId: subjectId, subjectName: subjectName, students: students)),
-            //   ),
-            // ),
           ],
 
-          if (isAdmin || user?.role == AppConstants.studentRole) ...[
+          _DrawerTile(
+            icon: Icons.computer_outlined,
+            activeIcon: Icons.computer,
+            title: 'Events',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => EventsScreen()),
+            ),
+          ),
+
+          if (user?.role == AppConstants.studentRole) ...[
             _DrawerTile(
               icon: Icons.school_outlined,
               activeIcon: Icons.school,
@@ -255,21 +272,6 @@ class CustomDrawer extends StatelessWidget {
               },
             ),
           ],
-          if (user != null &&
-              (isAdmin || user.role == AppConstants.staffRole))
-            ListTile(
-              leading: const Icon(Icons.person_add),
-              title: const Text('Register User'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const RegisterScreen(),
-                  ),
-                );
-              },
-            ),
         ],
       ),
     );
@@ -283,12 +285,10 @@ class CustomDrawer extends StatelessWidget {
           icon: Icons.settings_outlined,
           activeIcon: Icons.settings,
           title: 'Settings',
-          onTap: () {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(builder: (context) => SettingsScreen()),
-            // );
-          },
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SystemSettingsScreen()),
+          ),
         ),
         _DrawerTile(
           icon: Icons.logout_outlined,
